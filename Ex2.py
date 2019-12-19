@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from sklearn.linear_model import LogisticRegression
 
 
@@ -90,12 +91,13 @@ def oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass):
             counterForClass[numC] = counterForClass[numC] + 1
 
     correctAnswer = counterForClass.sum()
+    indexWithMaxProbability = np.array(indexWithMaxProbability)
 
     return indexWithMaxProbability , correctAnswer
 
 
 def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
-    arrForAllTableWithOutY = []
+    arrForAllTableWithY = []
     counter = 0
     startIndex = 0
 
@@ -104,12 +106,12 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
     for i in range(norm_xAfterThatY.shape[0]):
         if(norm_xAfterThatY[i, norm_xAfterThatY.shape[1]-1] != counter or (counter == numOfClass - 1 and i == norm_xAfterThatY.shape[0] - 1)):
             if(counter == numOfClass - 1 and i == norm_xAfterThatY.shape[0] - 1):
-                #array for all table with out col y "arrForAllTable"
-                arrForAllTableWithOutY.append(norm_xAfterThatY[startIndex:i+1, :-1])
+                #array for all table with col y "arrForAllTable"
+                arrForAllTableWithY.append(norm_xAfterThatY[startIndex:i+1, :])
                 startIndex = i
                 counter += 1
             else:
-                arrForAllTableWithOutY.append(norm_xAfterThatY[startIndex:i ,:-1])
+                arrForAllTableWithY.append(norm_xAfterThatY[startIndex:i ,:])
                 startIndex = i
                 counter += 1
     ##########################################################################################################################################
@@ -118,13 +120,13 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
     seventyPercentFromAllTable_train_data = []
     thirtyPercentFromAllTable_test_data = []
 
-    #to take 70% from each class and make 30% for test data
+    #to take 70% for data train and 30% for test data from each class
     for run in range(numOfClass):
-        end = int(arrForAllTableWithOutY[run].shape[0] * 0.7)
-        #data train
-        seventyPercentFromAllTable_train_data.append(arrForAllTableWithOutY[run][ :end, :])
-        #data test
-        thirtyPercentFromAllTable_test_data.append(arrForAllTableWithOutY[run][end:, :])
+        end = int(arrForAllTableWithY[run].shape[0] * 0.7)
+        #data train with out Y
+        seventyPercentFromAllTable_train_data.append(arrForAllTableWithY[run][ :end, :-1])
+        #data test with Y 0-car 1-fad 2-mas 3-gla 4-con 5-adi
+        thirtyPercentFromAllTable_test_data.append(arrForAllTableWithY[run][end:, :])
 
     temp_data_train = []
     temp_data_test = []
@@ -136,14 +138,14 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
                 #add col ones for first class
                 #############################################################################
                 np.append(
-                seventyPercentFromAllTable_train_data[i] ,
+                seventyPercentFromAllTable_train_data[i],
                 np.ones((seventyPercentFromAllTable_train_data[i].shape[0], 1)), axis = 1)
                 #############################################################################
                 ,
                 # add col zeros for secand class
                 #############################################################################
                 np.append(
-                seventyPercentFromAllTable_train_data[j] ,
+                seventyPercentFromAllTable_train_data[j],
                 np.zeros((seventyPercentFromAllTable_train_data[j].shape[0], 1)), axis = 1)
                 #############################################################################
                 ,
@@ -161,9 +163,9 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
         LG.append(diabetesCheck.fit(temp_data_train[i][:, :-1],temp_data_train[i][:,-1]))
 
 
+    #margin
+    ###################################################################################################################
     # prediction = diabetesLoadedModel.predict(sampleDataFeatures)
-
-
 
     sortBestProbability = []
     indexWithMaxProbability = []
@@ -183,15 +185,21 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
             counterForClass[numC] = counterForClass[numC] + 1
 
     correctAnswer = counterForClass.sum()
+    ###################################################################################################################
 
 
-
-    return arrForAllTableWithOutY
+    return arrForAllTableWithY
 
 
 # arrForAllTable = oneVsOne(train_data_with_classes,test_data_with_classes,norm_xAfterThatY,numOfClass)
-#
+# indexWithMaxProbability, correctAnswer = oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass)
 # arrForAllTable = np.array(arrForAllTable)
 # print(arrForAllTable[0][ :10, :])
-
-print(np.ones((10,1)).shape)
+# index = indexWithMaxProbability.shape[0]
+# print(index)
+# print(indexWithMaxProbability)
+# for i in range(index):
+#     print(indexWithMaxProbability[i].probability , "class :" ,indexWithMaxProbability[i].indexClass )
+    # plt.plot(indexWithMaxProbability[i].probability)
+    # plt.ylabel('some numbers')
+# plt.show()
