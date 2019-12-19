@@ -72,6 +72,8 @@ def NumberOfTable(numOfClass):
     for run in range(0,numOfClass):
         temp += run
     return temp
+
+
 def oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass):
 
     LG = []#build algorthem from training
@@ -112,7 +114,8 @@ def oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass):
     return probability , indexWithMaxProbabilityForOne , correctAnswer
 
 
-def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
+
+def oneVsOne(norm_xAfterThatY, numOfClass):
     numberOfTable = NumberOfTable(numOfClass)
     arrForAllTableWithY = []
     counter = 0
@@ -184,14 +187,12 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
                 # diabetesCheck.fit( all of data X , data Y)
                 LG.append(diabetesCheck.fit(temp_data_train[counter][:, :-1], temp_data_train[counter][:, -1]))
                 #######################################################################################################
-
             #######################################################################################################
         counter += 1
     thirtyPercentFromAllTable_test_data = np.array(thirtyPercentFromAllTable_test_data)
     LG = np.array(LG)
     arrCounterToHelp = [0]*numOfClass
     counter = 0
-    tempNumClass = []
     rowNumY = []
     tableRunY = []
     for tableRun in range (numOfClass):
@@ -223,20 +224,22 @@ def oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass):
             if(tableRunY[i][j] == counter):
                 correctAnswer += 1
         counter +=1
+    return arrForAllTableWithY , tableRunY , correctAnswer , allOfRow ,LG
 
-    return arrForAllTableWithY , tableRunY , correctAnswer , allOfRow
+
+arrForAllTableWithY , tableRunY , correctAnswer2 , allOfRow ,LG = oneVsOne(norm_xAfterThatY, numOfClass)
+
+probability , indexWithMaxProbabilityForOne , correctAnswer1 = oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass)
 
 
-arrForAllTableWithY , tableRunY , correctAnswer , allOfRow = oneVsOne(dataWithClasses,norm_xAfterThatY, numOfClass)
-
-p, i , c = oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass)
-
-for i in range(p.shape[0]):
-    for j in range(len(p[i])):
-        plt.plot(p[i][j])
+for i in range(probability.shape[0]):
+    for j in range(len(probability[i])):
+        plt.plot(probability[i][j])
 plt.suptitle('probability for one vs all')
+print("one vs all: The correct Answer is: " ,correctAnswer1 , " Form :",test_data_with_classes.shape[0])
 plt.show()
 for i in range(tableRunY.shape[0]):
     plt.plot(tableRunY[i])
-plt.suptitle('prediction for one vs one \n 0->car 1->fad 2->mas 3->gla 4->con 5->adi')
+plt.suptitle('prediction for one vs one \n X: 0->car 1->fad 2->mas 3->gla 4->con 5->adi')
+print("one vs one: The correct Answer is: " , correctAnswer2 , " Form :",allOfRow)
 plt.show()
