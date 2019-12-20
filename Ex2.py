@@ -191,6 +191,7 @@ def oneVsOne(norm_xAfterThatY, numOfClass):
         counter += 1
     thirtyPercentFromAllTable_test_data = np.array(thirtyPercentFromAllTable_test_data)
     LG = np.array(LG)
+    Probability = []
     arrCounterToHelp = [0]*numOfClass
     counter = 0
     rowNumY = []
@@ -203,6 +204,7 @@ def oneVsOne(norm_xAfterThatY, numOfClass):
                     # for testing
                     #######################################################################################################
                     if counter < numberOfTable :
+                        Probability.append(LG[counter].predict_proba([thirtyPercentFromAllTable_test_data[tableRun][rowRun, :-1]])[0])
                         prediction = (LG[counter].predict([thirtyPercentFromAllTable_test_data[tableRun][rowRun, :-1]]))
                         if (prediction == 1):
                             arrCounterToHelp[i] += 1
@@ -224,11 +226,9 @@ def oneVsOne(norm_xAfterThatY, numOfClass):
             if(tableRunY[i][j] == counter):
                 correctAnswer += 1
         counter +=1
-    return arrForAllTableWithY , tableRunY , correctAnswer , allOfRow ,LG
+    return arrForAllTableWithY , tableRunY , correctAnswer , allOfRow ,Probability
 
-
-arrForAllTableWithY , tableRunY , correctAnswer2 , allOfRow ,LG = oneVsOne(norm_xAfterThatY, numOfClass)
-
+arrForAllTableWithY , tableRunY , correctAnswer2 , allOfRow ,Probability = oneVsOne(norm_xAfterThatY, numOfClass)
 probability , indexWithMaxProbabilityForOne , correctAnswer1 = oneVsAll(train_data_with_classes,test_data_with_classes,numOfClass)
 
 
@@ -243,3 +243,37 @@ for i in range(tableRunY.shape[0]):
 plt.suptitle('prediction for one vs one \n X: 0->car 1->fad 2->mas 3->gla 4->con 5->adi')
 print("one vs one: The correct Answer is: " , correctAnswer2 , " Form :",allOfRow)
 plt.show()
+plt.plot(Probability)
+plt.suptitle('Probability for one vs one')
+plt.xlabel('30% * 15 class = 525')
+plt.ylabel('probability to give one or zero')
+plt.show()
+plt.plot(arrForAllTableWithY[0], marker="+")
+plt.suptitle('The class is: car')
+plt.xlabel('row')
+plt.ylabel('Value')
+plt.show()
+plt.plot(arrForAllTableWithY[1], marker="x")
+plt.suptitle('The class is: fad')
+plt.xlabel('row')
+plt.ylabel('Value')
+plt.show()
+plt.plot(arrForAllTableWithY[2], marker="+")
+plt.suptitle('The class is: mas')
+plt.xlabel('row')
+plt.ylabel('Value')
+plt.show()
+plt.plot(arrForAllTableWithY[3], marker="+")
+plt.suptitle('The class is: gla')
+plt.xlabel('row')
+plt.ylabel('Value')
+plt.show()
+plt.plot(arrForAllTableWithY[4], marker="+")
+plt.suptitle('The class is: con')
+plt.xlabel('row')
+plt.ylabel('Value')
+plt.show()
+# plt.plot(arrForAllTableWithY[5], marker="+")
+# plt.subplot('The class is: adi')
+# plt.show()
+
