@@ -276,4 +276,3 @@ plt.show()
 # plt.plot(arrForAllTableWithY[5], marker="+")
 # plt.subplot('The class is: adi')
 # plt.show()
-
