@@ -1,3 +1,2 @@
 # machineLearning
-LinearRegression
-methods for finding theta minimum
+LinearRegression, methods for finding theta minimum
